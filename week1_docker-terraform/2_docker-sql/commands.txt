@@ -26,7 +26,7 @@ docker build -it yellow_taxi_data_ingest:v001 .
 
 URL="https://de-zoomcamp-files.s3.ap-south-1.amazonaws.com/yellow_tripdata_2021-01.csv"  (S3 object URL)
 
-docker run -it \
+docker run -it --rm \
     --network=pg-network \
     yellow_taxi_data_ingest:v001 \
     --user=root \

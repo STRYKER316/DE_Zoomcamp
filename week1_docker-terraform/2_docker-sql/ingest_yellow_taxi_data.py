@@ -21,41 +21,39 @@ def main(params):
     # create a connection engine for postgres
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database_name}')
 
-    # download the csv file
+    # download the csv file from the csv_url
     csv_name = 'yellow_taxi_tripdata.csv'
     os.system(f'wget {csv_url} -O {csv_name}')
 
-
+    # create an iterator and ingest data in chunks of 100k rows
     df_iterator = pd.read_csv(csv_name, iterator=True, chunksize=100000)
     df = next(df_iterator)
 
+    # convert the columns that are in text format to the correct timestamp format
     df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
     df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
 
+    # create table schema in the database and put the first chunk
     df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
-
     df.to_sql(name=table_name, con=engine, if_exists='append')
 
 
+    # Run a loop till all of the data gets ingested
     while True:
         try:
             t_start = time()
             
             df = next(df_iterator)
-        
             df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
             df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-        
             df.to_sql(name=table_name, con=engine, if_exists='append')
         
             t_end = time()
-        
             print(f"Ingested another chunk of 100k rows to postgre, took {(t_end - t_start):.3f} sec")
         
         except StopIteration:
             print("Dataset ingestion complete")
             break
-
 
 
 # script excution
@@ -68,9 +66,10 @@ if __name__ == '__main__':
     parser.add_argument('--host', help='host name for postgres')
     parser.add_argument('--port', help='port for postgres')
     parser.add_argument('--database_name', help='database name in postgres')
-    parser.add_argument('--table_name', help='table in the postgres database to which the data will be ingested')
+    parser.add_argument('--table_name', help='table in the postgres db to which the data will be ingested')
     parser.add_argument('--csv_url', help='url of the CSV data file')
 
     args = parser.parse_args()
 
+    # call main() and execute the script
     main(args)

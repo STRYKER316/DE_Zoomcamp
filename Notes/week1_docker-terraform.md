@@ -300,16 +300,16 @@ DROP TABLE yellow_taxi_data;
 We are now ready to test the script with the following command:
 
 ```bash
-URL = "https://de-zoomcamp-files.s3.ap-south-1.amazonaws.com/yellow_tripdata_2021-01.csv"
+URL="https://de-zoomcamp-files.s3.ap-south-1.amazonaws.com/yellow_tripdata_2021-01.csv"
 
 python ingest_yellow_taxi_data.py \
     --user=root \
     --password=root \
     --host=localhost \
     --port=5432 \
-    --db=ny_taxi \
+    --database_name=ny_taxi \
     --table_name=yellow_taxi_trips \
-    --url=${URL}
+    --csv_url=${URL}
 ```
 * Note that we've changed the table name from `yellow_taxi_data` to `yellow_taxi_trips`.
 
@@ -351,6 +351,8 @@ docker build -t yellow_taxi_data_ingest:v001 .
 And run it:
 
 ```bash
+URL="https://de-zoomcamp-files.s3.ap-south-1.amazonaws.com/yellow_tripdata_2021-01.csv"
+
 docker run -it --rm \
     --network=pg-network \
     yellow_taxi_data_ingest:v001 \
@@ -358,9 +360,9 @@ docker run -it --rm \
     --password=root \
     --host=pg-database \
     --port=5432 \
-    --db=ny_taxi \
+    --database_name=ny_taxi \
     --table_name=yellow_taxi_trips \
-    --url="https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv"
+    --csv_url=${URL}
 ```
 * We need to provide the ```network``` for Docker to find the Postgres container. It goes before the name of the image.
 * Since Postgres is running on a separate container, the host argument will have to point to the container name of Postgres.
@@ -372,7 +374,7 @@ _([Video05 - Running Postgres and pgAdmin with Docker-Compose](https://www.youtu
 
 `docker-compose` allows us to launch multiple containers using a single configuration file, so that we don't have to run multiple complex `docker run` commands separately.
 
-Docker compose makes use of YAML files. Here's the `docker-compose.yaml` file for running the Postgres and pgAdmin containers:
+Docker compose makes use of ```YAML``` files. Here's the `docker-compose.yaml` file for running the Postgres and pgAdmin containers:
 
 ```yaml
 services:
@@ -386,21 +388,22 @@ services:
       - "./ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
     ports:
       - "5432:5432"
+
   pgadmin:
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=root
     volumes:
-      - "./data_pgadmin:/var/lib/pgadmin"
+      - "./pgadmin_data:/var/lib/pgadmin"
     ports:
       - "8080:80"
 ```
-* We don't have to specify a network because `docker-compose` takes care of it: every single container (or "service", as the file states) will run withing the same network and will be able to find each other according to their names (`pgdatabase` and `pgadmin` in this example).
-* We've added a volume for pgAdmin to save its settings, so that you don't have to keep re-creating the connection to Postgres every time ypu rerun the container. Make sure you create a `data_pgadmin` directory in your work folder where you run `docker-compose` from.
+* We don't have to specify a network because `docker-compose` takes care of it: every single container (or "service", as the file states) will run within the same network and will be able to find each other using  their respective names (`pgdatabase` and `pgadmin` in this example).
+* We've added a volume for pgAdmin to save its settings, so that you don't have to keep re-creating the connection to Postgres every time ypu rerun the container. Make sure you create a `pgadmin_data` directory in your work folder where you run `docker-compose` from.
 * All other details from the `docker run` commands (environment variables, volumes and ports) are mentioned accordingly in the file following YAML syntax.
 
-We can now run Docker compose by running the following command from the same directory where `docker-compose.yaml` is found. Make sure that all previous containers aren't running anymore:
+We can now run Docker compose by running the following command from the same directory where `docker-compose.yaml` is found. Make sure that all previous containers aren't running anymore.
 
 ```bash
 docker-compose up
@@ -408,7 +411,7 @@ docker-compose up
 
 >Note: this command asumes that the `ny_taxi_postgres_data` used for mounting the volume is in the same directory as `docker-compose.yaml`.
 
-Since the settings for pgAdmin were stored within the container and we have killed the previous onem you will have to re-create the connection by following the steps [in this section](#connecting-pgadmin-and-postgres-containers-with-the-help-of-docker-network).
+Since the settings for pgAdmin were stored within the container and we have stopped it, you will have to re-create the connection by following the steps [in this section](#connecting-pgadmin-and-postgres-containers-with-the-help-of-docker-network).
 
 You will have to press `Ctrl+C` in order to shut down the containers. The proper way of shutting them down is with this command:
 
@@ -422,7 +425,24 @@ And if you want to run the containers again in the background rather than in the
 docker-compose up -d
 ```
 
-If you want to re-run the dockerized ingest script when you run Postgres and pgAdmin with `docker-compose`, you will have to find the name of the virtual network that Docker compose created for the containers. You can use the command `docker network ls` to find it and then change the `docker run` command for the dockerized script to include the network name.
+>Note: If you want to re-run the dockerized ingest script when you run Postgres and pgAdmin with `docker-compose`, you will have to find the name of the virtual network that Docker compose created for the containers. You can use the command `docker network ls` to find it and then modify the `docker run` command for the dockerized script to include the network name.
+
+```bash
+URL="https://de-zoomcamp-files.s3.ap-south-1.amazonaws.com/yellow_tripdata_2021-01.csv"
+
+NETWORK_NAME=2_docker-sql_default   # Find out the network name
+
+docker run -it --rm \
+    --network=${NETWORK_NAME} \
+    yellow_taxi_data_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=pg-database \
+    --port=5432 \
+    --database_name=ny_taxi \
+    --table_name=yellow_taxi_trips \
+    --csv_url=${URL}
+```
 
 ## SQL refresher
 

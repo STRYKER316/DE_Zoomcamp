@@ -10,6 +10,6 @@
 07. Pandas: To help in inspecting, modifying, ingesting dataset into DB
 08. SQL: RDBMS Query Language
 09. Google Cloud Platform (GCP): Cloud service
-10. Terraform: 
+10. Terraform: Infrastructure as code (IAC) tool
 11. SQLAlchemy: ORM library to interact with RDBMS from python code
 12. psycopg2-binary: DB driver of postgreSql for python

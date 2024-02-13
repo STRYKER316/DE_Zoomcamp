@@ -378,7 +378,7 @@ Docker compose makes use of ```YAML``` files. Here's the `docker-compose.yaml` f
 
 ```yaml
 services:
-  pgdatabase:
+  pg-database:
     image: postgres:13
     environment:
       - POSTGRES_USER=root
@@ -389,7 +389,7 @@ services:
     ports:
       - "5432:5432"
 
-  pgadmin:
+  pg-admin:
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com

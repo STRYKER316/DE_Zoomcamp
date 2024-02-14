@@ -9,19 +9,18 @@ terraform {
 
 
 provider "google" {
-  # credentials only needs to be set, if you do not have the GOOGLE_CREDENTIALS set in the enviornment as -> [export GOOGLE_CREDENTIALS='<path-of-creds.json>']
-  # credentials = 
-  project = "algebraic-argon-414214"
-  region  = "asia-south1"
+  credentials = file(var.credentials)
+  project     = var.project
+  region      = var.region
 }
 
 
-resource "google_storage_bucket" "demo-bucket-1" {
-  name     = "algebraic-argon-414214-terra-bucket-1"
-  location = "ASIA"
+resource "google_storage_bucket" "demo-bucket-2" {
+  name     = var.gcs_bucket_name
+  location = var.location
 
   # Optional, but recommended settings:
-  storage_class               = "STANDARD"
+  storage_class               = var.gcs_storage_class
   uniform_bucket_level_access = true
 
   versioning {
@@ -50,7 +49,7 @@ resource "google_storage_bucket" "demo-bucket-1" {
 }
 
 
-resource "google_bigquery_dataset" "demo-dataset-1" {
-  dataset_id = "demo_dataset_1"
-  location   = "asia-south1"
+resource "google_bigquery_dataset" "demo-dataset-2" {
+  dataset_id = var.bq_dataset_name
+  location   = var.location
 }

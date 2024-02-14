@@ -13,16 +13,25 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "demo-bucket" {
-  name          = "algebraic-argon-414214-terra-bucket"
-  location      = "ASIA"
-  force_destroy = true
+  name     = "algebraic-argon-414214-terra-bucket"
+  location = "ASIA"
+
+  # Optional, but recommended settings:
+  storage_class               = "STANDARD"
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
+  }
 
   lifecycle_rule {
-    condition {
-      age = 1
-    }
     action {
-      type = "AbortIncompleteMultipartUpload"
+      type = "Delete"
+    }
+    condition {
+      age = 30 // days
     }
   }
+
+  force_destroy = true
 }

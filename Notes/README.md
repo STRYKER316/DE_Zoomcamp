@@ -2,7 +2,7 @@
 
 Below you will find links to the notes for each lesson.
 
-* [Lesson 1: Introduction to Data Engineering](week1_docker-terraform.md)
+* [Lesson 1: Introduction to Data Engineering, Docker, Terraform](week1_docker-terraform.md)
 * [Lesson 2: Workflow Orchestration](week2_workflow-orchestration.md)
 * [Lesson 3: Data Warehouse](3_data_warehouse.md)
 * [Lesson 4: Analytics Engineering](4_analytics.md)

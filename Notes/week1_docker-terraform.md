@@ -9,19 +9,20 @@
   - [Docker basic concepts](#docker-basic-concepts)
   - [Creating a custom pipeline with Docker](#creating-a-custom-pipeline-with-docker)
   - [Running Postgres in a container](#running-postgres-in-a-container)
-  - [Ingesting data to Postgres with Python](#ingesting-data-to-postgres-with-python)
-  - [Connecting pgAdmin and Postgres with Docker networking](#connecting-pgadmin-and-postgres-with-docker-networking)
-  - [Using the ingestion script with Docker](#using-the-ingestion-script-with-docker)
+  - [Ingesting data to Postgres using Jupyter Notebook](#ingesting-data-to-postgres-using-jupyter-notebook)
+  - [Connecting pgAdmin and Postgres with Docker networking](#connecting-pgadmin-and-postgres-containers-with-docker-networking)
+  - [Dockerizing the ingestion script](#dockerizing-the-ingestion-script)
     - [Exporting and testing the script](#exporting-and-testing-the-script)
     - [Dockerizing the script](#dockerizing-the-script)
   - [Running Postgres and pgAdmin with Docker-compose](#running-postgres-and-pgadmin-with-docker-compose)
-  - [SQL refresher](#sql-refresher)
+  - [SQL Basics](#sql-basics)
 - [Terraform and Google Cloud Platform](#terraform-and-google-cloud-platform)
-  - [GCP initial setup](#gcp-initial-setup)
-  - [GCP setup for access](#gcp-setup-for-access)
-  - [Terraform basics](#terraform-basics)
+  - [GCP Service Account Setup](#gcp-service-account-setup)
+  - [GCP Access Roles Setup](#gcp-access-roles-setup)
+  - [Infrastructure setup with Terraform](#infrastructure-setup-with-terraform)
   - [Creating GCP infrastructure with Terraform](#creating-gcp-infrastructure-with-terraform)
 - [Extra content](#extra-content)
+  - [Setting up a development environment in Github Codespaces](#setting-up-a-development-environment-in-github-codespaces)
   - [Setting up a development environment in a Google Cloud VM](#setting-up-a-development-environment-in-a-google-cloud-vm)
   - [Port mapping and networks in Docker](#port-mapping-and-networks-in-docker)
 
@@ -71,7 +72,7 @@ Docker containers are ***stateless***: any changes done inside a container will 
 
 >Note: You may be interested in a [Docker reference cheatsheet](https://gist.github.com/ziritrion/1842c8a4c4851602a8733bba19ab6050#docker).
 
-## Creating a custom pipeline with Docker Container
+## Creating a custom pipeline with Docker
 
 _([Video01 - Introduction to Docker](https://www.youtube.com/watch?v=EYNwNlOrpr0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=3))_
 
@@ -135,7 +136,7 @@ You should get the same output you did when you ran the pipeline script by itsel
 
 >Note: these instructions asume that `pipeline.py` and `Dockerfile` are in the same directory. The Docker commands should also be run from the same directory as these files.
 
-## Running Postgres in a Docker Container
+## Running Postgres in a Container
 
 _([Video02 - Ingesting NY Taxi Data to Postgres](https://www.youtube.com/watch?v=2JM-ziJt0WI&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=4))_
 
@@ -180,7 +181,7 @@ Install [pgcli](https://www.pgcli.com/) with the following command, if it is not
 pip install pgcli
 ```
 
-## Ingesting Dataset to Postgres using Jupyter Notebook
+## Ingesting data to Postgres using Jupyter Notebook
 
 _([Video02 - Ingesting NY Taxi Data to Postgres](https://www.youtube.com/watch?v=2JM-ziJt0WI&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=4))_
 
@@ -192,7 +193,7 @@ We will use data from the [NYC TLC Trip Record Data website](https://www1.nyc.go
 
 Check the completed `upload_yellow_taxi_data.ipynb` [in this link](../week1_docker-terraform/2_docker-sql/upload_yellow_taxi_data.ipynb) for a detailed guide. Feel free to copy the file to your work directory; in the same directory you will need to have the CSV file linked above and the `ny_taxi_postgres_data` subdirectory.
 
-## Connecting pgAdmin and Postgres containers with the help of Docker Network
+## Connecting pgAdmin and Postgres containers with Docker Networking
 
 _([Video03 - Connecting pgAdmin and Postgres](https://www.youtube.com/watch?v=hCAIVe9N0ow&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=5))_
 
@@ -450,7 +451,7 @@ _([Video06 - SQL Refresher](https://www.youtube.com/watch?v=QEcps_iskgg&ab_chann
 
 Below are a series of SQL query examples to remember how SQL works. For this example we'll asume that we're working with 2 tables named `trips` (list of all yelow taxi trips of NYC for January 2021) and `zones` (list of zone IDs for pick ups and drop offs).
 
->Check the [homework](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/dataset.md) for the session to learn about the `zones` table.
+>Check the [link](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/dataset.md) to learn about the `zones` table.
 
 >For a more detailed look into SQL, check out [this article](https://towardsdatascience.com/sql-in-a-nutshell-part-1-basic-real-world-scenarios-33a25ba8d220).
 
@@ -694,7 +695,9 @@ As a final note, SQL commands can be categorized into the following categories:
 
 _[Back to the top](#table-of-contents)_
 
-# Google Cloud Platform (GCP)
+# Terraform and Google Cloud Platform
+
+## Google Cloud Platform (GCP)
 
 _([Video01 - Introduction to GCP](https://www.youtube.com/watch?v=Hajwnmj0xfQ&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=6))_
 
@@ -703,7 +706,7 @@ Cloud Computing service offered by Google.  Includes a range of hosted services 
 GCP is organized around _projects_. You may create a project and access all available GCP resources and services from the project dashboard.
 
 
-# Terraform
+## Terraform
 
 _([Video02 - Introduction to Terraform](https://www.youtube.com/watch?v=s2bOYDCKl_M&ab_channel=DataSlinger))_
 
@@ -740,7 +743,7 @@ Please follow these steps:
 
 You should now be ready to work with GCP.
 
-## GCP Access Roles
+## GCP Access Roles Setup
 
 In the following chapters, we will setup a _Data Lake_ on Google Cloud Storage and a _Data Warehouse_ in BigQuery. We will explore these concepts in future lessons but a Data Lake is where we would usually store data and a Data Warehouse provides a more structured way to access this data.
 
@@ -860,7 +863,7 @@ With a configuration ready, you are now ready to create your infrastructure. The
 * `terraform apply` : applies the changes to the infrastructure.
 * `terraform destroy` : removes your stack from the infrastructure.
 
-## Creating GCP infra using Terraform
+## Creating GCP infrastructure with Terraform
 
 _([Video04 - Deployment with a Variables File](https://www.youtube.com/watch?v=dNkEgO-CExg&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=10))_
 

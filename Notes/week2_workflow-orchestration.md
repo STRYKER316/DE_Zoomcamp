@@ -26,9 +26,9 @@
 ## Workflow Orchestration 
 
 **WHAT TO EXPECT THIS WEEK**
-- We are going to run Mage and Postgres in a docker environment. 
-- We will then take the NY taxi data set, transform it and load it to both Postgres and GCS
-- We will perform additional transformations using pandas, apache arrow, and sql and then load to BigQuery 
+- We are going to run Mage and Postgrs in a docker environment. 
+- We will then take the NY yellow taxi data set, transform it and load it to both Postgres and GCS
+- We will perform additional transformations using pandas,  pyarrow, and sql and then load to BigQuery 
 - We will extract, transform, and load data to multiple sources.
 
 <div align = center>

@@ -1,5 +1,3 @@
->Next: [Workflow Orchestration](week2_workflow-orchestration.md)
-
 ### Table of contents
 
 - [Introduction to Data Engineering](#introduction-to-data-engineering)
@@ -945,4 +943,3 @@ If you're having issues with Docker and networking (especially if you already ha
 
 _[Back to the top](#table-of-contents)_
 
->[Back to Index](README.md)
